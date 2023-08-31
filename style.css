@@ -5,7 +5,7 @@ body {
 #text {
   background-color: black;
   color: white;
-  padding: 10px;
+  padding: 15px;
 }
 
 #game {
@@ -14,7 +14,7 @@ body {
   background-color: lightgray;
   color: white;
   margin: 0 auto;
-  padding: 10px;
+  padding: 5px;
 }
 
 #controls {
@@ -31,9 +31,9 @@ body {
 #monsterStats {
   display: none;
   border: 1px black solid;
-  color: white;
+  color: rgb(205, 206, 202);
   padding: 5px;
-  background-color: red;
+  background-color: rgb(154, 0, 0);
 }
 
 .stat {
