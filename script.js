@@ -263,7 +263,7 @@ function attack()
   text.innerText = "The " + monsters[monsterID].name + " attacks."; 
   text.innerText += " You attack it with your " + weapons[currentWeapon].name + ".";
 
-  health -= monsters[monsterID].level;
+  health -= getMonsterAttackValue(monsters[monsterID].level);
   healthText.innerText = health;
 
   monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
@@ -277,7 +277,14 @@ function attack()
   {
     (monsterID === 2) ? winGame():monsterDefeated();
   }
+}
+
+function getMonsterAttackValue()
+{
+  let hit = (level * 5) - (Math.floor(Math.random() * xp));
+  consol.log(hit);
   
+  return hit;
 }
 
 function dodge()
