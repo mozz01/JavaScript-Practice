@@ -1,11 +1,11 @@
 // Variables
 let xp = 0;
 let health = 100;
-let gold = 500;
+let gold = 50;
 
 let currentWeapon = 0;
-let fighting
-let mosterHealth
+let monsterID;
+let mosterHealth;
 let inventory = ["stick"];
 
 const healthPrice = 10;
@@ -24,8 +24,8 @@ const healthText = document.querySelector("#healthText");
 const goldText = document.querySelector("#goldText");
 
 const mosterStats = document.querySelector("#mosterStats");
-const monsterNameText = document.querySelector("#monsterNameText");
-const monsterHealthText = document.querySelector("#monsterHealthText");
+const monsterNameText = document.querySelector("#monsterName");
+const monsterHealthText = document.querySelector("#monsterHealth");
 
 
 
@@ -34,7 +34,7 @@ const locations = [
     name: "town square",
     "button text": ["Go to Store", "Go to Cave", "Fight Dragon"],
     "button function": [goStore, goCave, fightDragon], 
-    text: "You're in the town square. You see a sign that says \"Store\"."
+    text: "You're in the town square. You see a sign that says \"Store.\""
   },
   {
     name: "store", 
@@ -47,6 +47,30 @@ const locations = [
     "button text": ["Fight Slime", "Fight Fang Beast", "Go to Town Square"], 
     "button function": [fightSlime, fightBeast, goTown], 
     text: "You enter the cave. You see some monsters."
+  },
+  {
+    name: "fight", 
+    "button text": ["Attack", "Dodge", "Run"], 
+    "button function": [attack, dodge, goTown], 
+    text: "You are fighting a monster."
+  },
+  {
+    name: "kill monster",
+    "button text": ["Go to Town Square", "Go to Town Square", "Go to Town Square"],
+    "button function": [goTown, goTown, goTown], 
+    text: "You've defeated the monster. You gain experience and find gold."
+  },
+  {
+    name: "lose", 
+    "button text": ["REPLAY?", "REPLAY?", "REPLAY?"], 
+    "button function": [restart, restart, restart], 
+    text: "You die."
+  },
+  {
+    name: "win game", 
+    "button text": ["REPLAY?", "REPLAY?", "REPLAY?"], 
+    "button function": [restart, restart, restart], 
+    text: "You have defeated the dragon and won the game! :D"
   }
 ]
 
@@ -97,6 +121,7 @@ button3.onclick = fightDragon;
 // Functions
 function updateUI(location)
 {
+  monsterStats.style.display = "none";
   button1.innerText = location["button text"][0];
   button2.innerText = location["button text"][1];
   button3.innerText = location["button text"][2];
@@ -108,42 +133,26 @@ function updateUI(location)
   text.innerText = location.text;
 }
 
-
 function goTown()
 {
-  console.log("i'm in town");
   updateUI(locations[0]);
-  console.log("updated UI from town");
 }
+
 
 
 function goStore()
 {
-  console.log("i'm in store");
   updateUI(locations[1]);
-  console.log("updated UI from store");
 }
-
-
-function goCave()
-{
-  console.log("i'm in Cave");
-  updateUI(locations[2]);
-
-}
-
 
 function buyHealth()
 {
-  console.log("i'm buying health");
   if(gold < healthPrice)
   {
-    console.log("couldn't buy health. Not enough gold");
     text.innerText = "You don't have enough gold :(";
   }
   else if(health >= maxHealth)
-  {
-    console.log("couldn't buy health. Max health.");
+  { 
     text.innerText = "You have max health";
   }
   else
@@ -151,18 +160,21 @@ function buyHealth()
     gold -= healthPrice;
     health += healValue;
 
+    if(health > maxHealth)
+    {
+      // Refund
+      gold += (health - maxHealth);
+      health = maxHealth;
+      text.innerText = "Reached max health. Excess gold refunded.";
+    }
+    
     goldText.innerText = gold;
     healthText.innerText = health;
-    
-    console.log("Gold: ", gold, "Health: ", health);
-    console.log("got health. going back to town");
   }
 }
 
-
 function buyWeapon()
 {
-  console.log("i'm buying weapon");
   if(currentWeapon >= weapons.length - 1)
   {
     text.innerText = "Out of weapons. You have the most powerful weapon.";
@@ -187,7 +199,6 @@ function buyWeapon()
   }
 }
 
-
 function sellWeapons()
 {
   if(inventory.length > 1)
@@ -205,37 +216,114 @@ function sellWeapons()
   
 }
 
+
+
+function goCave()
+{
+  updateUI(locations[2]);
+}
+
 function goFight(monsterID)
 {
-  monster = monsters[monsterID];
-  playerDmg = weapons[currentWeapon].power;
+  updateUI(locations[3]);
 
-  if(monster.health > 0)
+  if(monsterID === 2)
   {
-    monster.health -= playerDmg;
-    monsterHealthText.innertext = monster.health;
+    text.innerText = "Defeat the dragon to win the game.";
   }
+  
+  monsterStats.style.display = "block";
+
+  monsterNameText.innerText = monsters[monsterID].name;
+  monsterHealthText.innerText = monsters[monsterID].health;
+  monsterHealth = monsters[monsterID].health;
   
 }
 
 function fightSlime()
 {
-  slimeID = 0;
-  goFight(slimeID);
+  monsterID = 0;
+  goFight(monsterID);
 }
-
 
 function fightBeast()
 {
-  beastID = 1;
-  goFight(beastID);
+  monsterID = 1;
+  goFight(monsterID);
 }
-
 
 function fightDragon()
 {
-  dragonID = 2;
-  goFight(dragonID);
+  monsterID = 2;
+  goFight(monsterID);
+}
+
+function attack()
+{  
+  text.innerText = "The " + monsters[monsterID].name + " attacks."; 
+  text.innerText += " You attack it with your " + weapons[currentWeapon].name + ".";
+
+  health -= monsters[monsterID].level;
+  healthText.innerText = health;
+
+  monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
+  monsterHealthText.innerText = monsterHealth;
+
+  if(health <= 0)
+  {
+    lose();
+  }
+  else if(monsterHealth <= 0)
+  {
+    (monsterID === 2) ? winGame():monsterDefeated();
+  }
+  
+}
+
+function dodge()
+{
+  text.innerText = "You dodge the attack from the " + monsters[monsterID].name + ".";
 }
 
 
+
+function monsterDefeated()
+{
+  monsterHealthText.innerText = 0;
+  
+  xp += monsters[monsterID].level;
+  xpText.innerText = xp;
+  
+  gold += Math.floor(monsters[monsterID].level * 6.7);
+  goldText.innerText = gold;
+
+  // text.innerText = "You have defeated " + monsters[monsterID].name + " and gained " + gainedGold + " gold and " + monsters[monsterID].level + " xp.";
+  
+  updateUI(locations[4]);
+}
+
+function lose()
+{
+  healthText.innerText = 0;
+  text.innerText = "The " + monsters[monsterID].name + " defeated you.";
+
+  updateUI(locations[5]);
+}
+
+function restart()
+{
+  xp = 0;
+  health = 100;
+  gold = 50;
+  currentWeapon = 0;
+  inventory = ["stick"];
+  goldText.innerText = gold;
+  xpText.innerText = xp;
+  healthText.innerText = health;
+  goTown();
+}
+
+function winGame()
+{
+  updateUI(locations[6]);
+}
