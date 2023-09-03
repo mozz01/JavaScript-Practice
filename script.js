@@ -260,10 +260,19 @@ function fightDragon()
 
 function attack()
 {  
-  text.innerText = "The " + monsters[monsterID].name + " attacks."; 
-  text.innerText += " You attack it with your " + weapons[currentWeapon].name + ".";
+  text.innerText = "The " + monsters[monsterID].name + " attacks.";
 
-  health -= getMonsterAttackValue(monsters[monsterID].level);
+  text.innerText += " You attack it with your " + weapons[currentWeapon].name + ".";
+  
+  if (isMonsterHit()) 
+  {
+    health -= getMonsterAttackValue(monsters[monsterID].level);  
+  }
+  else // Player miss
+  {
+    text.innerText += " You miss.";
+  }
+  
   healthText.innerText = health;
 
   monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
@@ -277,12 +286,23 @@ function attack()
   {
     (monsterID === 2) ? winGame():monsterDefeated();
   }
+
+  if( Math.random() <= 0.1 && (inventory.length() !== 1) )
+  {
+    text.innerText += " Your " + inventory.pop() + " breaks.";
+    currentWeapon--;
+  }
+}
+
+function isMonsterHit()
+{
+  return ( Math.random() > 0.2 ) || ( health <= (0.2 * maxHealth) ); // Always hit if player health is less than 20%
 }
 
 function getMonsterAttackValue()
 {
-  let hit = (level * 5) - (Math.floor(Math.random() * xp));
-  consol.log(hit);
+  let hit = (monsters[monsterID].level * 5) - (Math.floor(Math.random() * xp));
+  console.log(hit);
   
   return hit;
 }
