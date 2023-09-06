@@ -287,7 +287,7 @@ function attack()
     (monsterID === 2) ? winGame():monsterDefeated();
   }
 
-  if( Math.random() <= 0.1 && (inventory.length() !== 1) )
+  if( Math.random() <= 0.1 && (inventory.length !== 1) )
   {
     text.innerText += " Your " + inventory.pop() + " breaks.";
     currentWeapon--;
@@ -301,7 +301,7 @@ function isMonsterHit()
 
 function getMonsterAttackValue()
 {
-  let hit = (monsters[monsterID].level * 5) - (Math.floor(Math.random() * xp));
+  let hit = Math.abs((monsters[monsterID].level * 5) - (Math.floor(Math.random() * xp)));
   console.log(hit);
   
   return hit;
