@@ -77,6 +77,12 @@ const locations = [
     "button text": ["Pick 2", "Pick 8", "Go to Town Square"], 
     "button function": [pickTwo, pickEight, goTown], 
     text: "You find a secret game. Pick a number above. Ten numbers will be randomly chosen between 0 and 10. If the number you choose matches one of the random numbers, you win!"
+  },
+  {
+    name: "resetButtons", 
+    "button text": ["Go to Town Square", "Go to Town Square", "Go to Town Square"], 
+    "button function": [goTown, goTown, goTown], 
+    text: ""
   }
 ]
 
@@ -370,6 +376,7 @@ function easterEgg()
 
 function pick(guess)
 {
+  updateUI(locations[8]);
   let numbers = [];
   let isGuessCorrect = false;
   
@@ -396,6 +403,7 @@ function pick(guess)
   {
     text.innerText += "Your guess is correct! You win 20 gold.";
     gold += 20;
+    goldText.innerText = gold;
   }
   else
   {
