@@ -57,7 +57,7 @@ const locations = [
   {
     name: "kill monster",
     "button text": ["Go to Town Square", "Go to Town Square", "Go to Town Square"],
-    "button function": [goTown, goTown, goTown], 
+    "button function": [goTown, goTown, easterEgg], 
     text: "You've defeated the monster. You gain experience and find gold."
   },
   {
@@ -71,6 +71,12 @@ const locations = [
     "button text": ["REPLAY?", "REPLAY?", "REPLAY?"], 
     "button function": [restart, restart, restart], 
     text: "You have defeated the dragon and won the game! :D"
+  },
+  {
+    name: "easter egg", 
+    "button text": ["Pick 2", "Pick 8", "Go to Town Square"], 
+    "button function": [pickTwo, pickEight, goTown], 
+    text: "You find a secret game. Pick a number above. Ten numbers will be randomly chosen between 0 and 10. If the number you choose matches one of the random numbers, you win!"
   }
 ]
 
@@ -354,3 +360,57 @@ function winGame()
 {
   updateUI(locations[6]);
 }
+
+
+
+function easterEgg()
+{
+  updateUI(locations[7]);
+}
+
+function pick(guess)
+{
+  let numbers = [];
+  let isGuessCorrect = false;
+  
+  while(numbers.length < 11)
+    {
+      numbers.push(Math.floor(Math.random() * 10));
+    }
+  
+  text.innerText = "You picked " + guess + ". The random numbers are: \n";
+
+  for(let i = 0; i < 10; i++)
+    {
+      text.innerText += numbers[i] + ", ";
+      
+      if(numbers[i] === guess)
+      {
+        isGuessCorrect = true;
+      }
+    }
+
+  text.innerText += "\n";
+  
+  if(isGuessCorrect)
+  {
+    text.innerText += "Your guess is correct! You win 20 gold.";
+    gold += 20;
+  }
+  else
+  {
+    text.innerText += "Your guess is incorrect. Better luck next time!";
+  }
+  
+}
+
+function pickTwo()
+{
+  pick(2);  
+}
+
+function pickEight()
+{
+  pick(8);
+}
+
